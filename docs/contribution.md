@@ -10,4 +10,5 @@ You can always open a Pull Request to place a link and a small description of yo
 [Third Party Plugins](third-party-plugins.md) page. In special cases,
 we might offer you to host your package under the PHP HTTP namespace.
 
-For more details about contribution, please see our [contribution guide]().
+For more details about contribution, please see our
+[contribution guide](http://docs.httplug.io/en/latest/contributing/).
