@@ -77,9 +77,9 @@ class PluginClientSpec extends ObjectBehavior
         $this->getPlugins()->shouldReturn([$plugin]);
     }
 
-    function it_sets_new_plugins()
+    function it_sets_new_plugins(Plugin $plugin)
     {
-        $plugins = [new LoopPlugin];
+        $plugins = [$plugin];
         $this->setPlugins($plugins);
 
         $this->getPlugins()->shouldReturn($plugins);
