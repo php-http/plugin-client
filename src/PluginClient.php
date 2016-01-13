@@ -57,7 +57,7 @@ final class PluginClient implements HttpClient, HttpAsyncClient
             throw new \RuntimeException('Client must be an instance of Http\\Client\\HttpClient or Http\\Client\\HttpAsyncClient');
         }
 
-        $this->plugins = $plugins;
+        $this->plugins = $this->setPlugins($plugins);
         $this->options = $this->configure($options);
     }
 
@@ -88,7 +88,9 @@ final class PluginClient implements HttpClient, HttpAsyncClient
      */
     public function setPlugins(array $plugins = [])
     {
-        $this->plugins = $plugins;
+        foreach ($plugins as $plugin) {
+            $this->addPlugin($plugin);
+        }
     }
 
     /**
