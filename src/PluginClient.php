@@ -62,7 +62,7 @@ final class PluginClient implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Adds a plugin to the client.
+     * Append a plugin to the end of the queue.
      *
      * @param Plugin $plugin
      */
