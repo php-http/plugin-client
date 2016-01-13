@@ -31,7 +31,7 @@ final class PluginClient implements HttpClient, HttpAsyncClient
      *
      * @var Plugin[]
      */
-    private $plugins;
+    private $plugins = [];
 
     /**
      * A list of options.
@@ -57,8 +57,40 @@ final class PluginClient implements HttpClient, HttpAsyncClient
             throw new \RuntimeException('Client must be an instance of Http\\Client\\HttpClient or Http\\Client\\HttpAsyncClient');
         }
 
-        $this->plugins = $plugins;
+        $this->setPlugins($plugins);
         $this->options = $this->configure($options);
+    }
+
+    /**
+     * Append a plugin to the end of the queue.
+     *
+     * @param Plugin $plugin
+     */
+    public function addPlugin(Plugin $plugin)
+    {
+        $this->plugins[] = $plugin;
+    }
+
+    /**
+     * Get all active plugins.
+     *
+     * @return Plugin[]
+     */
+    public function getPlugins()
+    {
+        return $this->plugins;
+    }
+
+    /**
+     * Assign plugins to the client.
+     *
+     * @param Plugin[] $plugins
+     */
+    public function setPlugins(array $plugins = [])
+    {
+        foreach ($plugins as $plugin) {
+            $this->addPlugin($plugin);
+        }
     }
 
     /**
