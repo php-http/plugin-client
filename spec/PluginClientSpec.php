@@ -69,4 +69,19 @@ class PluginClientSpec extends ObjectBehavior
 
         $this->shouldThrow('Http\Client\Plugin\Exception\LoopException')->duringSendRequest($request);
     }
+
+    function it_adds_a_plugin(Plugin $plugin)
+    {
+        $this->addPlugin($plugin);
+
+        $this->getPlugins()->shouldReturn([$plugin]);
+    }
+
+    function it_sets_new_plugins()
+    {
+        $plugins = [new LoopPlugin];
+        $this->setPlugins($plugins);
+
+        $this->getPlugins()->shouldReturn($plugins);
+    }
 }

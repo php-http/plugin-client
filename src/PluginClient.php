@@ -62,6 +62,36 @@ final class PluginClient implements HttpClient, HttpAsyncClient
     }
 
     /**
+     * Adds a plugin to the client.
+     *
+     * @param Plugin $plugin
+     */
+    public function addPlugin(Plugin $plugin)
+    {
+        $this->plugins[] = $plugin;
+    }
+
+    /**
+     * Get all active plugins.
+     *
+     * @return Plugin[]
+     */
+    public function getPlugins()
+    {
+        return $this->plugins;
+    }
+
+    /**
+     * Assign plugins to the client.
+     *
+     * @param Plugin[] $plugins
+     */
+    public function setPlugins(array $plugins = [])
+    {
+        $this->plugins = $plugins;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function sendRequest(RequestInterface $request)
