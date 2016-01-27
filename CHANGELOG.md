@@ -1,5 +1,8 @@
 # Change Log
 
+
+## 1.0.0 - 2016-01-28
+
 ### Added
 
  - New Header plugins (see the documentation)
@@ -12,6 +15,7 @@
 ### Fixed
 
 - Decoder plugin no longer sends accept header for encodings that require gzip if gzip is not available
+
 
 ## 0.1.0 - 2016-01-13
 
