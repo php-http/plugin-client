@@ -37,6 +37,7 @@ class ContentLengthPluginSpec extends ObjectBehavior
 
         $stream->getSize()->shouldBeCalled()->willReturn(null);
         $request->withBody(Argument::type('Http\Message\Encoding\ChunkStream'))->shouldBeCalled()->willReturn($request);
+        $request->withAddedHeader('Transfer-Encoding', 'chunked')->shouldBeCalled()->willReturn($request);
 
         $this->handleRequest($request, function () {}, function () {});
     }

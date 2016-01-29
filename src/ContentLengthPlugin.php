@@ -24,6 +24,7 @@ class ContentLengthPlugin implements Plugin
             if (null === $stream->getSize()) {
                 $stream = new ChunkStream($stream);
                 $request = $request->withBody($stream);
+                $request = $request->withAddedHeader('Transfer-Encoding', 'chunked');
             } else {
                 $request = $request->withHeader('Content-Length', $stream->getSize());
             }

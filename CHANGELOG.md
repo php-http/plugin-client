@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.0.1 - 2016-01-29
+
+### Changed
+
+ - Set the correct header for the Content-Length when in chunked mode.
 
 ## 1.0.0 - 2016-01-28
 
