@@ -2,7 +2,6 @@
 
 namespace Http\Client\Plugin;
 
-use Http\Message\Authentication;
 use Http\Message\RequestMatcher;
 use Psr\Http\Message\RequestInterface;
 
