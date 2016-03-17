@@ -2,6 +2,7 @@
 
 namespace Http\Client\Plugin;
 
+use Http\Client\Exception\TransferException;
 use Http\Message\Cookie;
 use Http\Message\CookieJar;
 use Psr\Http\Message\RequestInterface;
@@ -86,6 +87,8 @@ class CookiePlugin implements Plugin
      * @param $setCookie
      *
      * @return Cookie|null
+     *
+     * @throws \Http\Client\Exception\TransferException
      */
     private function createCookie(RequestInterface $request, $setCookie)
     {
@@ -97,7 +100,8 @@ class CookiePlugin implements Plugin
 
         list($name, $cookieValue) = $this->createValueKey(array_shift($parts));
 
-        $expires = 0;
+        $maxAge = null;
+        $expires = null;
         $domain = $request->getUri()->getHost();
         $path = $request->getUri()->getPath();
         $secure = false;
@@ -109,11 +113,22 @@ class CookiePlugin implements Plugin
 
             switch (strtolower($key)) {
                 case 'expires':
-                    $expires = \DateTime::createFromFormat(DATE_COOKIE, $value);
+                    $expires = \DateTime::createFromFormat(\DateTime::COOKIE, $value);
+
+                    if (true !== ($expires instanceof \DateTime)) {
+                        throw new TransferException(
+                            sprintf(
+                                'Cookie header `%s` expires value `%s` could not be converted to date',
+                                $name,
+                                $value
+                            )
+                        );
+                    }
+
                     break;
 
                 case 'max-age':
-                    $expires = (new \DateTime())->add(new \DateInterval('PT'.(int) $value.'S'));
+                    $maxAge = (int) $value;
                     break;
 
                 case 'domain':
@@ -134,7 +149,7 @@ class CookiePlugin implements Plugin
             }
         }
 
-        return new Cookie($name, $cookieValue, $expires, $domain, $path, $secure, $httpOnly);
+        return new Cookie($name, $cookieValue, $maxAge, $domain, $path, $secure, $httpOnly, $expires);
     }
 
     /**

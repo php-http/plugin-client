@@ -2,15 +2,15 @@
 
 namespace spec\Http\Client\Plugin;
 
-use Http\Promise\FulfilledPromise;
 use Http\Message\Cookie;
 use Http\Message\CookieJar;
+use Http\Promise\FulfilledPromise;
 use Http\Promise\Promise;
+use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
-use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class CookiePluginSpec extends ObjectBehavior
 {
@@ -146,7 +146,7 @@ class CookiePluginSpec extends ObjectBehavior
 
         $response->hasHeader('Set-Cookie')->willReturn(true);
         $response->getHeader('Set-Cookie')->willReturn([
-            'cookie=value',
+            'cookie=value; expires=Tuesday, 31-Mar-99 07:42:12 GMT; Max-Age=60; path=/; domain=test.com; secure; HttpOnly'
         ]);
 
         $request->getUri()->willReturn($uri);
@@ -156,5 +156,25 @@ class CookiePluginSpec extends ObjectBehavior
         $promise = $this->handleRequest($request, $next, function () {});
         $promise->shouldHaveType('Http\Promise\Promise');
         $promise->wait()->shouldReturnAnInstanceOf('Psr\Http\Message\ResponseInterface');
+    }
+
+    function it_throws_exception_on_invalid_expires_date(RequestInterface $request, ResponseInterface $response, UriInterface $uri)
+    {
+        $next = function () use ($response) {
+            return new FulfilledPromise($response->getWrappedObject());
+        };
+
+        $response->hasHeader('Set-Cookie')->willReturn(true);
+        $response->getHeader('Set-Cookie')->willReturn([
+            'cookie=value; expires=i-am-an-invalid-date;'
+        ]);
+
+        $request->getUri()->willReturn($uri);
+        $uri->getHost()->willReturn('test.com');
+        $uri->getPath()->willReturn('/');
+
+        $promise = $this->handleRequest($request, $next, function () {});
+        $promise->shouldReturnAnInstanceOf('Http\Promise\RejectedPromise');
+        $promise->shouldThrow('Http\Client\Exception\TransferException')->duringWait();
     }
 }
