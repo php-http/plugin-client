@@ -2,13 +2,11 @@
 
 namespace Http\Client\Plugin\Exception;
 
-use Http\Client\Exception\HttpException;
-
 /**
- * Thrown when there is a client error (4xx).
- *
  * @author Joel Wurtz <joel.wurtz@gmail.com>
+ *
+ * @deprecated since version 1.1, to be removed in 2.0. Use {@link \Http\Client\Common\Exception\ClientErrorException} instead.
  */
-class ClientErrorException extends HttpException
+class ClientErrorException extends \Http\Client\Common\Exception\ClientErrorException
 {
 }

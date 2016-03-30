@@ -3,16 +3,20 @@
 namespace spec\Http\Client\Plugin;
 
 use PhpSpec\Exception\Example\SkippingException;
-use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
+use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class ContentLengthPluginSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
         $this->shouldHaveType('Http\Client\Plugin\ContentLengthPlugin');
+    }
+
+    function it_is_a_plugin()
+    {
         $this->shouldImplement('Http\Client\Plugin\Plugin');
     }
 

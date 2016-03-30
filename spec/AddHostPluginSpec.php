@@ -22,14 +22,13 @@ class AddHostPluginSpec extends ObjectBehavior
     function it_is_initializable(UriInterface $uri)
     {
         $uri->getHost()->shouldBeCalled()->willReturn('example.com');
-        $this->beConstructedWith($uri);
+
         $this->shouldHaveType('Http\Client\Plugin\AddHostPlugin');
     }
 
     function it_is_a_plugin(UriInterface $uri)
     {
         $uri->getHost()->shouldBeCalled()->willReturn('example.com');
-        $this->beConstructedWith($uri);
 
         $this->shouldImplement('Http\Client\Plugin\Plugin');
     }
