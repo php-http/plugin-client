@@ -2,8 +2,6 @@
 
 namespace Http\Client\Plugin;
 
-use Http\Message\Authentication;
-
 /**
  * @author Joel Wurtz <joel.wurtz@gmail.com>
  *
