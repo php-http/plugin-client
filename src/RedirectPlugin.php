@@ -5,128 +5,17 @@ namespace Http\Client\Plugin;
 use Http\Client\Exception\HttpException;
 use Http\Client\Plugin\Exception\CircularRedirectionException;
 use Http\Client\Plugin\Exception\MultipleRedirectionException;
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Follow redirections.
- *
  * @author Joel Wurtz <joel.wurtz@gmail.com>
+ *
+ * @deprecated since version 1.1, to be removed in 2.0. Use {@link \Http\Client\Common\Plugin\RedirectPlugin} instead.
  */
-class RedirectPlugin implements Plugin
+class RedirectPlugin extends \Http\Client\Common\Plugin\RedirectPlugin implements Plugin
 {
-    /**
-     * Rule on how to redirect, change method for the new request.
-     *
-     * @var array
-     */
-    protected $redirectCodes = [
-        300 => [
-            'switch' => [
-                'unless' => ['GET', 'HEAD'],
-                'to' => 'GET',
-            ],
-            'multiple' => true,
-            'permanent' => false,
-        ],
-        301 => [
-            'switch' => [
-                'unless' => ['GET', 'HEAD'],
-                'to' => 'GET',
-            ],
-            'multiple' => false,
-            'permanent' => true,
-        ],
-        302 => [
-            'switch' => [
-                'unless' => ['GET', 'HEAD'],
-                'to' => 'GET',
-            ],
-            'multiple' => false,
-            'permanent' => false,
-        ],
-        303 => [
-            'switch' => [
-                'unless' => ['GET', 'HEAD'],
-                'to' => 'GET',
-            ],
-            'multiple' => false,
-            'permanent' => false,
-        ],
-        307 => [
-            'switch' => false,
-            'multiple' => false,
-            'permanent' => false,
-        ],
-        308 => [
-            'switch' => false,
-            'multiple' => false,
-            'permanent' => true,
-        ],
-    ];
-
-    /**
-     * Determine how header should be preserved from old request.
-     *
-     * @var bool|array
-     *
-     * true     will keep all previous headers (default value)
-     * false    will ditch all previous headers
-     * string[] will keep only headers with the specified names
-     */
-    protected $preserveHeader;
-
-    /**
-     * Store all previous redirect from 301 / 308 status code.
-     *
-     * @var array
-     */
-    protected $redirectStorage = [];
-
-    /**
-     * Whether the location header must be directly used for a multiple redirection status code (300).
-     *
-     * @var bool
-     */
-    protected $useDefaultForMultiple;
-
-    /**
-     * @var array
-     */
-    protected $circularDetection = [];
-
-    /**
-     * @param array $config {
-     *
-     *     @var bool|string[] $preserve_header True keeps all headers, false remove all of them, an array is interpreted as a list of header names to keep.
-     *     @var bool $use_default_for_multiple Whether the location header must be directly used for a multiple redirection status code (300).
-     * }
-     */
-    public function __construct(array $config = [])
-    {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            'preserve_header' => true,
-            'use_default_for_multiple' => true,
-        ]);
-        $resolver->setAllowedTypes('preserve_header', ['bool', 'array']);
-        $resolver->setAllowedTypes('use_default_for_multiple', 'bool');
-        $resolver->setNormalizer('preserve_header', function (OptionsResolver $resolver, $value) {
-            if (is_bool($value) && false === $value) {
-                return [];
-            }
-
-            return $value;
-        });
-        $options = $resolver->resolve($config);
-
-        $this->preserveHeader = $options['preserve_header'];
-        $this->useDefaultForMultiple = $options['use_default_for_multiple'];
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -174,36 +63,6 @@ class RedirectPlugin implements Plugin
 
             return $redirectPromise->wait();
         });
-    }
-
-    /**
-     * Builds the redirect request.
-     *
-     * @param RequestInterface $request    Original request
-     * @param UriInterface     $uri        New uri
-     * @param int              $statusCode Status code from the redirect response
-     *
-     * @return MessageInterface|RequestInterface
-     */
-    protected function buildRedirectRequest(RequestInterface $request, UriInterface $uri, $statusCode)
-    {
-        $request = $request->withUri($uri);
-
-        if (false !== $this->redirectCodes[$statusCode]['switch'] && !in_array($request->getMethod(), $this->redirectCodes[$statusCode]['switch']['unless'])) {
-            $request = $request->withMethod($this->redirectCodes[$statusCode]['switch']['to']);
-        }
-
-        if (is_array($this->preserveHeader)) {
-            $headers = array_keys($request->getHeaders());
-
-            foreach ($headers as $name) {
-                if (!in_array($name, $this->preserveHeader)) {
-                    $request = $request->withoutHeader($name);
-                }
-            }
-        }
-
-        return $request;
     }
 
     /**

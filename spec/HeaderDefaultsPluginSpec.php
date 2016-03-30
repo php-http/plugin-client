@@ -3,10 +3,10 @@
 namespace spec\Http\Client\Plugin;
 
 use PhpSpec\Exception\Example\SkippingException;
-use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
+use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class HeaderDefaultsPluginSpec extends ObjectBehavior
 {

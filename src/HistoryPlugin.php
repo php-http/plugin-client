@@ -2,45 +2,11 @@
 
 namespace Http\Client\Plugin;
 
-use Http\Client\Exception;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
 /**
- * Record http call.
+ * @author Joel Wurtz <joel.wurtz@gmail.com>
+ *
+ * @deprecated since version 1.1, to be removed in 2.0. Use {@link \Http\Client\Common\Plugin\HistoryPlugin} instead.
  */
-class HistoryPlugin implements Plugin
+class HistoryPlugin extends \Http\Client\Common\Plugin\HistoryPlugin implements Plugin
 {
-    /**
-     * Journal use to store request / responses / exception.
-     *
-     * @var Journal
-     */
-    private $journal;
-
-    /**
-     * @param Journal $journal
-     */
-    public function __construct(Journal $journal)
-    {
-        $this->journal = $journal;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handleRequest(RequestInterface $request, callable $next, callable $first)
-    {
-        $journal = $this->journal;
-
-        return $next($request)->then(function (ResponseInterface $response) use ($request, $journal) {
-            $journal->addSuccess($request, $response);
-
-            return $response;
-        }, function (Exception $exception) use ($request, $journal) {
-            $journal->addFailure($request, $exception);
-
-            throw $exception;
-        });
-    }
 }
